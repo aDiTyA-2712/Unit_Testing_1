@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Assert = NUnit.Framework.Assert;
+using Assert = NUnit.Framework.Assert;//testing is done by NUnit
 using Moq;
+using FluentAssertions;
 
 namespace NUnitDemo
 {
@@ -39,7 +40,7 @@ namespace NUnitDemo
             if(result)
             {
                 Arithmetic ar = new Arithmetic();
-                Assert.AreEqual(35, ar.Sum(i, j));
+                Assert.AreEqual(35, ar.Sum(i, j));//Nunit is used 
             }
             else
             {
@@ -53,7 +54,7 @@ namespace NUnitDemo
         public void TestSub(int a,int b,int expected)
         {
             Arithmetic ar = new Arithmetic();
-            Assert.AreEqual(expected, ar.Sub(a, b));
+            Assert.AreEqual(expected, ar.Sub(a, b));//Nunit is used
         }
         [Test]
         [Ignore("Not implemented yet")]
@@ -66,14 +67,42 @@ namespace NUnitDemo
         public void TestDiv(int x,int y,int z)
         {
             Arithmetic ar=new Arithmetic();
-            Assert.AreEqual(z, ar.Div(x, y));
+            Assert.AreEqual(z, ar.Div(x, y));//Nunit is used
         }
         [Test]
         public void CheckValues()
         {
             Mock<Arithmetic> mock = new Mock<Arithmetic>();
             mock.Setup(x=>x.CheckDigitsOnly()).Returns(true);//by passing true value even if it is false
-            Assert.AreEqual(true,mock.Object.CheckDigitsOnly());
+            Assert.AreEqual(true,mock.Object.CheckDigitsOnly());//Mocking is done suing moq Framework
+        }
+        [Test]
+        public void LinqSummingIntegerArray()
+        {
+            var integerValues = new int[] { 11, 27, 54, 78, -123 };
+            var linqSum = integerValues.Sum();
+
+            int expectedTotalSum=0;
+            foreach(var value in integerValues)
+            {
+                expectedTotalSum+=value;
+            }
+            linqSum.Should().Be(expectedTotalSum);//Fluent Assertion test
+        }
+        [Test]
+        public void AdultCriteria()
+        {
+            var ageString = "1994-04-17";
+            var userBirthday = DateTime.Parse(ageString);
+
+            //min age = 18
+            var minAllowableDate = DateTime.Now.AddYears(-18);
+            userBirthday.Should().BeBefore(minAllowableDate);
+
+            //max age = 120
+            var maxAllowableDate = DateTime.Now.AddYears(-120);
+            userBirthday.Should().BeAfter(maxAllowableDate);
+
         }
     }
 }
